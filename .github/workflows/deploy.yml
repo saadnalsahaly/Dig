@@ -56,31 +56,3 @@ jobs:
               run: |-
                 docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
                 docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-            - name: Deploy to EC2
-              env:
-                REPOSITORY: dig/dig
-                REGISTRY: ${{steps.login-ecr.outputs.registry}}
-                IMAGE_TAG: ${{github.sha}}
-                EC2_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-                HOSTNAME: ${{secrets.HOST}}
-                USER_NAME: ${{secrets.USERNAME}}
-              uses: appleboy/ssh-action@v1.1.0
-              with:
-                host: ${{env.HOSTNAME}}
-                port: 22
-                key: ${{env.EC2_PRIVATE_KEY}}
-                username: ${{env.USER_NAME}}
-                envs: REGISTRY, REPOSITORY, IMAGE_TAG, AWS_REGION, CONTAINER_NAME
-                script: |- 
-                    whoami 
-                    aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $REGISTRY
-                    sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
-                    if sudo docker ps -a --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
-                        echo "Container '$CONTAINER_NAME' exists. Stopping..."
-                        sudo docker stop "$CONTAINER_NAME"
-                        sudo docker rm "$CONTAINER_NAME"
-                    else
-                        echo "Container does not exist. No action taken."
-                    fi
-                    sudo docker run -d --name $CONTAINER_NAME -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Development $REGISTRY/$REPOSITORY:$IMAGE_TAG
