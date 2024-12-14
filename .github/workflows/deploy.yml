@@ -72,7 +72,8 @@ jobs:
                 key: ${{env.EC2_PRIVATE_KEY}}
                 username: ${{env.USER_NAME}}
                 envs: REGISTRY, REPOSITORY, IMAGE_TAG, AWS_REGION, CONTAINER_NAME
-                script: |-
+                script: |- 
+                    whoami 
                     aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $REGISTRY
                     sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
                     if sudo docker ps -a --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
