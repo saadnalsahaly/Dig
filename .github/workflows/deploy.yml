@@ -50,4 +50,16 @@ jobs:
                 context: .
                 push: true
                 tags: saadns/dig:${{github.sha}}
+
+            - name: Deploy to EC2
+              uses: appleboy/ssh-action@master
+              with:
+                 host: ${{env.HOSTNAME}}
+                 key: ${{env.EC2_PRIVATE_KEY}}
+                 username: ${{env.USER_NAME}}
+                 scripts: |
+                   docker stop dig || true
+                   docker rm dig || true
+                   docker pull ${{secrets.DOCKER_USERNAME}}/dig:${{github.sha}}
+                   docker run -d --name dig 80:80 ${{secrets.DOCKER_USERNAME}}/dig:${{github.sha}}
               
