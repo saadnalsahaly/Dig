@@ -2,7 +2,7 @@ name: Deploy to EC2
 on:
     push:
         branches:
-            - master
+            - cicd
 
 env:
     AWS_REGION: eu-central-1
@@ -31,28 +31,35 @@ jobs:
               run: | 
                 dotnet build -c Release
                 echo "build successful"
-    push:
+    deploy:
         runs-on: ubuntu-latest
         needs: build
         steps:
             - name: Checkout repo
               uses: actions/checkout@v3
-            
-            - name: Configure credentials
-              uses: aws-actions/configure-aws-credentials@v4
+              
+            - name: Login to Docker Hub
+              uses: docker/login-action@v1
+              with: 
+                username: ${{secrets.DOCKER_USERNAME}}
+                password: ${{secrets.DOCKER_PASSWORD}}
+
+            - name: Build and Push Docker Image
+              uses: docker/build-push-action@master
               with:
-                role-to-assume: arn:aws:iam::149536456759:role/Dig-Role-Rq5NWekYxkWd
-                aws-region: ${{env.AWS_REGION}}
+                context: .
+                push: true
+                tags: saadns/dig:${{github.sha}}
 
-            - name: Login to ECR repo
-              id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v2
-
-            - name: Build, tag and push image to ecr
-              env:
-                REGISTRY: ${{steps.login-ecr.outputs.registry}}
-                REPOSITORY: dig/dig
-                IMAGE_TAG: ${{github.sha}}
-              run: |-
-                docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-                docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+            - name: Deploy to EC2
+              uses: appleboy/ssh-action@master
+              with:
+                 host: ${{secrets.HOST}}
+                 key: ${{secrets.SSH_PRIVATE_KEY}}
+                 username: ${{secrets.USERNAME}}
+                 scripts: |
+                   docker stop dig || true
+                   docker rm dig || true
+                   docker pull ${{secrets.DOCKER_USERNAME}}/dig:${{github.sha}}
+                   docker run -d --name dig 80:80 ${{secrets.DOCKER_USERNAME}}/dig:${{github.sha}}
+              
