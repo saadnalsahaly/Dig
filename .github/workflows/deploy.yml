@@ -54,9 +54,9 @@ jobs:
             - name: Deploy to EC2
               uses: appleboy/ssh-action@master
               with:
-                 host: ${{env.HOSTNAME}}
-                 key: ${{env.EC2_PRIVATE_KEY}}
-                 username: ${{env.USER_NAME}}
+                 host: ${{secrets.HOST}}
+                 key: ${{secrets.SSH_PRIVATE_KEY}}
+                 username: ${{secrets.USERNAME}}
                  scripts: |
                    docker stop dig || true
                    docker rm dig || true
