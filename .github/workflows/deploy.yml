@@ -61,5 +61,5 @@ jobs:
                    docker stop dig || true
                    docker rm dig || true
                    docker pull ${{secrets.DOCKER_USERNAME}}/dig:${{github.sha}}
-                   docker run -d --name dig 80:80 ${{secrets.DOCKER_USERNAME}}/dig:${{github.sha}}
+                   docker run -d --name dig 5000:8080 ${{secrets.DOCKER_USERNAME}}/dig:${{github.sha}}
               
