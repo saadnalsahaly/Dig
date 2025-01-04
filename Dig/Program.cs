@@ -1,3 +1,5 @@
+using Dig.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace Dig.Backend
@@ -10,13 +12,14 @@ namespace Dig.Backend
 
             // Add services to the container.
             builder.Services.AddControllers();
+            builder.Services.AddDbContext<EnvironmentContext>(opt =>
+                opt.UseInMemoryDatabase("EnvironmentLog"));
+            builder.Services.AddDbContext<UserCommandContext>(opt =>
+                opt.UseInMemoryDatabase("CommandsLog"));
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dig", Version = "v1" });
-            });
+            builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
