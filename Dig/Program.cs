@@ -13,9 +13,9 @@ namespace Dig.Backend
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddDbContext<EnvironmentContext>(opt =>
-                opt.UseInMemoryDatabase("EnvironmentLog"));
+                opt.UseSqlite("Data Source=environmentlog.db"));
             builder.Services.AddDbContext<UserCommandContext>(opt =>
-                opt.UseInMemoryDatabase("CommandsLog"));
+                opt.UseSqlite("Data Source=commandslog.db"));
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddEndpointsApiExplorer();
