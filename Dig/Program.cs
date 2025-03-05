@@ -20,6 +20,8 @@ namespace Dig.Backend
             builder.Services.AddOpenApi();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
+            builder.Services.AddSingleton<SseService<EnvironmentData>>();
 
             var app = builder.Build();
 

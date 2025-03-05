@@ -23,10 +23,20 @@ namespace Dig.Controllers
 
         // GET: api/UserCommands
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserCommand>>> GetUserCommands()
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserCommand>>> GetUserCommands([FromQuery] int? latest)
         {
+            if (latest.HasValue)
+            {
+                return await _context.UserCommands
+                    .OrderByDescending(c => c.Id)
+                    .Take(latest.Value)
+                    .ToListAsync();
+            }
+
             return await _context.UserCommands.ToListAsync();
         }
+
 
         // GET: api/UserCommands/5
         [HttpGet("{id}")]
