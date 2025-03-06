@@ -10,5 +10,5 @@ public class EnvironmentContext : DbContext
         Database.EnsureCreated();
     }
 
-    public DbSet<EnvironmentData> Environments { get; set; } = null!;
+    public DbSet<Environment> Environments { get; set; } = null!;
 }

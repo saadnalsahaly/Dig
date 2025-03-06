@@ -1,6 +1,6 @@
 namespace Dig;
 
-public class EnvironmentData(long id, double temperature, double humidity, double lightIntensity, DateTime dateTime)
+public class Environment(long id, double temperature, double humidity, double lightIntensity, DateTime dateTime)
 {
     public long Id { get; set; } = id;
     public double Temperature { get; set; } = temperature;

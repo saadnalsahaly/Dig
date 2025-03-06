@@ -1,56 +1,56 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using Dig;
 using Dig.Models;
 
 namespace Dig.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class EnvironmentController : ControllerBase
+    [ApiController]
+    public class NotificationController : ControllerBase
     {
-        private readonly EnvironmentContext _context;
-        private SseService<Environment> _sseService;
+        private readonly NotificationContext _context;
+        private readonly SseService<Notification> _sseService;
 
-        public EnvironmentController(EnvironmentContext context, SseService<Environment> sseService)
+        public NotificationController(NotificationContext context, SseService<Notification> sseService)
         {
             _context = context;
             _sseService = sseService;
         }
 
-        // GET: api/Environment
+        // GET: api/Notification
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Environment>>> GetEnvironments([FromQuery] int? latest)
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications([FromQuery]int? latest)
         {
             if (latest.HasValue)
             {
-                return await _context.Environments
+                return await _context.Notifications
                     .OrderByDescending(e => e.Id)
                     .Take(latest.Value)
                     .ToListAsync();
             }
             
-            return await _context.Environments.ToListAsync();
+            return await _context.Notifications.ToListAsync();
         }
 
-        // GET: api/Environment/5
+        // GET: api/Notification/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Environment>> GetEnvironment(long id)
+        public async Task<ActionResult<Notification>> GetNotification(long id)
         {
-            var environmentData = await _context.Environments.FindAsync(id);
+            var notification = await _context.Notifications.FindAsync(id);
 
-            if (environmentData == null)
+            if (notification == null)
             {
                 return NotFound();
             }
 
-            return environmentData;
+            return notification;
         }
         
         [HttpGet("stream")]
@@ -85,18 +85,17 @@ namespace Dig.Controllers
             }
         }
 
-
-        // PUT: api/Environment/5
+        // PUT: api/Notification/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnvironment(long id, Environment environment)
+        public async Task<IActionResult> PutNotification(long id, Notification notification)
         {
-            if (id != environment.Id)
+            if (id != notification.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(environment).State = EntityState.Modified;
+            _context.Entry(notification).State = EntityState.Modified;
 
             try
             {
@@ -104,7 +103,7 @@ namespace Dig.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EnvironmentExists(id))
+                if (!NotificationExists(id))
                 {
                     return NotFound();
                 }
@@ -117,38 +116,36 @@ namespace Dig.Controllers
             return NoContent();
         }
 
-        // POST: api/Environment
+        // POST: api/Notification
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Environment>> PostEnvironment(Environment environment)
+        public async Task<ActionResult<Notification>> PostNotification(Notification notification)
         {
-            _context.Environments.Add(environment);
+            _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
 
-            _sseService.AddUpdate(environment);
-
-            return CreatedAtAction(nameof(GetEnvironments), new { id = environment.Id }, environment);
+            return CreatedAtAction("GetNotifications", new { id = notification.Id }, notification);
         }
 
-        // DELETE: api/Environment/5
+        // DELETE: api/Notification/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEnvironment(long id)
+        public async Task<IActionResult> DeleteNotification(long id)
         {
-            var environmentData = await _context.Environments.FindAsync(id);
-            
-            if (environmentData == null)
+            var notification = await _context.Notifications.FindAsync(id);
+            if (notification == null)
             {
                 return NotFound();
             }
 
-            _context.Environments.Remove(environmentData);
+            _context.Notifications.Remove(notification);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
-        private bool EnvironmentExists(long id)
+        private bool NotificationExists(long id)
         {
-            return _context.Environments.Any(e => e.Id == id);
+            return _context.Notifications.Any(e => e.Id == id);
         }
     }
 }

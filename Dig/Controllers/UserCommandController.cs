@@ -12,13 +12,15 @@ namespace Dig.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserCommandsController : ControllerBase
+    public class UserCommandController : ControllerBase
     {
-        private readonly UserCommandContext _context;
+        private readonly UserCommandContext _userCommandContext;
+        private readonly OperationModeContext _operationModeContext;
 
-        public UserCommandsController(UserCommandContext context)
+        public UserCommandController(UserCommandContext userCommandContext, OperationModeContext operationModeContext)
         {
-            _context = context;
+            _userCommandContext = userCommandContext;
+            _operationModeContext = operationModeContext;
         }
 
         // GET: api/UserCommands
@@ -28,13 +30,13 @@ namespace Dig.Controllers
         {
             if (latest.HasValue)
             {
-                return await _context.UserCommands
+                return await _userCommandContext.UserCommands
                     .OrderByDescending(c => c.Id)
                     .Take(latest.Value)
                     .ToListAsync();
             }
 
-            return await _context.UserCommands.ToListAsync();
+            return await _userCommandContext.UserCommands.ToListAsync();
         }
 
 
@@ -42,7 +44,7 @@ namespace Dig.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserCommand>> GetUserCommand(long id)
         {
-            var userCommand = await _context.UserCommands.FindAsync(id);
+            var userCommand = await _userCommandContext.UserCommands.FindAsync(id);
 
             if (userCommand == null)
             {
@@ -62,11 +64,11 @@ namespace Dig.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(userCommand).State = EntityState.Modified;
+            _userCommandContext.Entry(userCommand).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _userCommandContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -88,8 +90,32 @@ namespace Dig.Controllers
         [HttpPost]
         public async Task<ActionResult<UserCommand>> PostUserCommand(UserCommand userCommand)
         {
-            _context.UserCommands.Add(userCommand);
-            await _context.SaveChangesAsync();
+            // Retrieve the latest operation mode
+            var latestMode = await _operationModeContext.OperationModes
+                .OrderByDescending(m => m.Id) // Assuming the latest mode has the highest ID
+                .FirstOrDefaultAsync();
+    
+            if (latestMode == null)
+            {
+                return BadRequest("Operation mode is not set.");
+            }
+
+            switch (latestMode.Mode)
+            {
+                case "Automatic":
+                    return StatusCode(StatusCodes.Status403Forbidden, "User commands are not allowed in Automatic mode.");
+
+                case "Manual":
+                    // Allowed - continue processing
+                    break;
+
+                default:
+                    return BadRequest($"Unknown operation mode: {latestMode.Mode}");
+            }
+            
+            // If the mode is "Manual", proceed with saving the command
+            _userCommandContext.UserCommands.Add(userCommand);
+            await _userCommandContext.SaveChangesAsync();
 
             return CreatedAtAction("GetUserCommand", new { id = userCommand.Id }, userCommand);
         }
@@ -98,21 +124,21 @@ namespace Dig.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserCommand(long id)
         {
-            var userCommand = await _context.UserCommands.FindAsync(id);
+            var userCommand = await _userCommandContext.UserCommands.FindAsync(id);
             if (userCommand == null)
             {
                 return NotFound();
             }
 
-            _context.UserCommands.Remove(userCommand);
-            await _context.SaveChangesAsync();
+            _userCommandContext.UserCommands.Remove(userCommand);
+            await _userCommandContext.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool UserCommandExists(long id)
         {
-            return _context.UserCommands.Any(e => e.Id == id);
+            return _userCommandContext.UserCommands.Any(e => e.Id == id);
         }
     }
 }

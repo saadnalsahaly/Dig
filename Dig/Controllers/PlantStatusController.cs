@@ -1,56 +1,56 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using Dig;
 using Dig.Models;
 
 namespace Dig.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class EnvironmentController : ControllerBase
+    [ApiController]
+    public class PlantStatusController : ControllerBase
     {
-        private readonly EnvironmentContext _context;
-        private SseService<Environment> _sseService;
+        private readonly PlantStatusContext _context;
+        private readonly SseService<PlantStatus> _sseService;
 
-        public EnvironmentController(EnvironmentContext context, SseService<Environment> sseService)
+        public PlantStatusController(PlantStatusContext context, SseService<PlantStatus> sseService)
         {
             _context = context;
             _sseService = sseService;
         }
 
-        // GET: api/Environment
+        // GET: api/PlantStatus
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Environment>>> GetEnvironments([FromQuery] int? latest)
+        public async Task<ActionResult<IEnumerable<PlantStatus>>> GetPlantStatuses([FromQuery]int? latest)
         {
             if (latest.HasValue)
             {
-                return await _context.Environments
+                return await _context.PlantStatuses
                     .OrderByDescending(e => e.Id)
                     .Take(latest.Value)
                     .ToListAsync();
             }
             
-            return await _context.Environments.ToListAsync();
+            return await _context.PlantStatuses.ToListAsync();
         }
 
-        // GET: api/Environment/5
+        // GET: api/PlantStatus/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Environment>> GetEnvironment(long id)
+        public async Task<ActionResult<PlantStatus>> GetPlantStatus(long id)
         {
-            var environmentData = await _context.Environments.FindAsync(id);
+            var plantStatus = await _context.PlantStatuses.FindAsync(id);
 
-            if (environmentData == null)
+            if (plantStatus == null)
             {
                 return NotFound();
             }
 
-            return environmentData;
+            return plantStatus;
         }
         
         [HttpGet("stream")]
@@ -85,18 +85,17 @@ namespace Dig.Controllers
             }
         }
 
-
-        // PUT: api/Environment/5
+        // PUT: api/PlantStatus/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnvironment(long id, Environment environment)
+        public async Task<IActionResult> PutPlantStatus(long id, PlantStatus plantStatus)
         {
-            if (id != environment.Id)
+            if (id != plantStatus.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(environment).State = EntityState.Modified;
+            _context.Entry(plantStatus).State = EntityState.Modified;
 
             try
             {
@@ -104,7 +103,7 @@ namespace Dig.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EnvironmentExists(id))
+                if (!PlantStatusExists(id))
                 {
                     return NotFound();
                 }
@@ -117,38 +116,36 @@ namespace Dig.Controllers
             return NoContent();
         }
 
-        // POST: api/Environment
+        // POST: api/PlantStatus
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Environment>> PostEnvironment(Environment environment)
+        public async Task<ActionResult<PlantStatus>> PostPlantStatus(PlantStatus plantStatus)
         {
-            _context.Environments.Add(environment);
+            _context.PlantStatuses.Add(plantStatus);
             await _context.SaveChangesAsync();
 
-            _sseService.AddUpdate(environment);
-
-            return CreatedAtAction(nameof(GetEnvironments), new { id = environment.Id }, environment);
+            return CreatedAtAction("GetPlantStatuses", new { id = plantStatus.Id }, plantStatus);
         }
 
-        // DELETE: api/Environment/5
+        // DELETE: api/PlantStatus/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEnvironment(long id)
+        public async Task<IActionResult> DeletePlantStatus(long id)
         {
-            var environmentData = await _context.Environments.FindAsync(id);
-            
-            if (environmentData == null)
+            var plantStatus = await _context.PlantStatuses.FindAsync(id);
+            if (plantStatus == null)
             {
                 return NotFound();
             }
 
-            _context.Environments.Remove(environmentData);
+            _context.PlantStatuses.Remove(plantStatus);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
-        private bool EnvironmentExists(long id)
+        private bool PlantStatusExists(long id)
         {
-            return _context.Environments.Any(e => e.Id == id);
+            return _context.PlantStatuses.Any(e => e.Id == id);
         }
     }
 }
