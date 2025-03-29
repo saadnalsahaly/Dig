@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 
+namespace Dig;
+
 public class SseService<T>
 {
     private readonly ConcurrentQueue<T> _updates = new();
