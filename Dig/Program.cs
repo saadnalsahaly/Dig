@@ -10,6 +10,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddDbContext<PlantContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("PlantContext") ?? throw new InvalidOperationException("Connection string 'PlantContext' not found.")));
             
         // Add services to the container.
         builder.Services.AddControllers();
