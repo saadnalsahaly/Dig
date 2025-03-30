@@ -1,8 +1,8 @@
 namespace Dig.Models;
 
-public class Plant
+public class Plant(long id, string plantId, DateTime dateTime)
 {
-    public long Id { get; set; }
-    public string PlantId { get; set; }
-    public DateTime DateTime { get; set; }
+    public long Id { get; set; } = id;
+    public string PlantId { get; set; } = plantId;
+    public DateTime DateTime { get; set; } = dateTime;
 }
