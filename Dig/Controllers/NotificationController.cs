@@ -53,6 +53,7 @@ namespace Dig.Controllers
             return notification;
         }
         
+        // GET: api/Notification/stream
         [HttpGet("stream")]
         public async Task StreamUpdates()
         {
@@ -85,37 +86,6 @@ namespace Dig.Controllers
             }
         }
 
-        // PUT: api/Notification/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNotification(long id, Notification notification)
-        {
-            if (id != notification.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(notification).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NotificationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Notification
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -125,27 +95,6 @@ namespace Dig.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetNotifications", new { id = notification.Id }, notification);
-        }
-
-        // DELETE: api/Notification/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNotification(long id)
-        {
-            var notification = await _context.Notifications.FindAsync(id);
-            if (notification == null)
-            {
-                return NotFound();
-            }
-
-            _context.Notifications.Remove(notification);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool NotificationExists(long id)
-        {
-            return _context.Notifications.Any(e => e.Id == id);
         }
     }
 }

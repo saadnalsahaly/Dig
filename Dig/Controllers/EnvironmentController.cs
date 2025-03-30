@@ -16,7 +16,7 @@ namespace Dig.Controllers
     public class EnvironmentController : ControllerBase
     {
         private readonly EnvironmentContext _context;
-        private SseService<Environment> _sseService;
+        private readonly SseService<Environment> _sseService;
 
         public EnvironmentController(EnvironmentContext context, SseService<Environment> sseService)
         {
@@ -53,6 +53,7 @@ namespace Dig.Controllers
             return environmentData;
         }
         
+        // GET: api/Environment/stream
         [HttpGet("stream")]
         public async Task StreamUpdates()
         {
@@ -84,39 +85,7 @@ namespace Dig.Controllers
                 // Client disconnected, safely exit
             }
         }
-
-
-        // PUT: api/Environment/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnvironment(long id, Environment environment)
-        {
-            if (id != environment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(environment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EnvironmentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
+        
         // POST: api/Environment
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -128,27 +97,6 @@ namespace Dig.Controllers
             _sseService.AddUpdate(environment);
 
             return CreatedAtAction(nameof(GetEnvironments), new { id = environment.Id }, environment);
-        }
-
-        // DELETE: api/Environment/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEnvironment(long id)
-        {
-            var environmentData = await _context.Environments.FindAsync(id);
-            
-            if (environmentData == null)
-            {
-                return NotFound();
-            }
-
-            _context.Environments.Remove(environmentData);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
-
-        private bool EnvironmentExists(long id)
-        {
-            return _context.Environments.Any(e => e.Id == id);
         }
     }
 }

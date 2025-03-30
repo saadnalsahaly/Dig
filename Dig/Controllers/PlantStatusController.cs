@@ -53,6 +53,7 @@ namespace Dig.Controllers
             return plantStatus;
         }
         
+        // GET: api/PlantStatus/stream
         [HttpGet("stream")]
         public async Task StreamUpdates()
         {
@@ -84,38 +85,7 @@ namespace Dig.Controllers
                 // Client disconnected, safely exit
             }
         }
-
-        // PUT: api/PlantStatus/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPlantStatus(long id, PlantStatus plantStatus)
-        {
-            if (id != plantStatus.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(plantStatus).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PlantStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
+        
         // POST: api/PlantStatus
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -125,27 +95,6 @@ namespace Dig.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPlantStatuses", new { id = plantStatus.Id }, plantStatus);
-        }
-
-        // DELETE: api/PlantStatus/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePlantStatus(long id)
-        {
-            var plantStatus = await _context.PlantStatuses.FindAsync(id);
-            if (plantStatus == null)
-            {
-                return NotFound();
-            }
-
-            _context.PlantStatuses.Remove(plantStatus);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool PlantStatusExists(long id)
-        {
-            return _context.PlantStatuses.Any(e => e.Id == id);
         }
     }
 }

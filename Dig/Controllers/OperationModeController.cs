@@ -48,38 +48,7 @@ namespace Dig.Controllers
 
             return operationMode;
         }
-
-        // PUT: api/OperationMode/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOperationMode(long id, OperationMode operationMode)
-        {
-            if (id != operationMode.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(operationMode).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OperationModeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
+        
         // POST: api/OperationMode
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -100,27 +69,6 @@ namespace Dig.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOperationModes", new { id = operationMode.Id }, operationMode);
-        }
-
-        // DELETE: api/OperationMode/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOperationMode(long id)
-        {
-            var operationMode = await _context.OperationModes.FindAsync(id);
-            if (operationMode == null)
-            {
-                return NotFound();
-            }
-
-            _context.OperationModes.Remove(operationMode);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool OperationModeExists(long id)
-        {
-            return _context.OperationModes.Any(e => e.Id == id);
         }
     }
 }

@@ -25,7 +25,6 @@ namespace Dig.Controllers
 
         // GET: api/UserCommands
         [HttpGet]
-        [HttpGet]
         public async Task<ActionResult<IEnumerable<UserCommand>>> GetUserCommands([FromQuery] int? latest)
         {
             if (latest.HasValue)
@@ -38,7 +37,6 @@ namespace Dig.Controllers
 
             return await _userCommandContext.UserCommands.ToListAsync();
         }
-
 
         // GET: api/UserCommands/5
         [HttpGet("{id}")]
@@ -53,38 +51,7 @@ namespace Dig.Controllers
 
             return userCommand;
         }
-
-        // PUT: api/UserCommands/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserCommand(long id, UserCommand userCommand)
-        {
-            if (id != userCommand.Id)
-            {
-                return BadRequest();
-            }
-
-            _userCommandContext.Entry(userCommand).State = EntityState.Modified;
-
-            try
-            {
-                await _userCommandContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserCommandExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
+        
         // POST: api/UserCommands
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -118,27 +85,6 @@ namespace Dig.Controllers
             await _userCommandContext.SaveChangesAsync();
 
             return CreatedAtAction("GetUserCommand", new { id = userCommand.Id }, userCommand);
-        }
-
-        // DELETE: api/UserCommands/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserCommand(long id)
-        {
-            var userCommand = await _userCommandContext.UserCommands.FindAsync(id);
-            if (userCommand == null)
-            {
-                return NotFound();
-            }
-
-            _userCommandContext.UserCommands.Remove(userCommand);
-            await _userCommandContext.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserCommandExists(long id)
-        {
-            return _userCommandContext.UserCommands.Any(e => e.Id == id);
         }
     }
 }
