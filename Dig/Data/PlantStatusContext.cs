@@ -1,6 +1,7 @@
+using Dig.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dig.Models;
+namespace Dig.Data;
 
 public class PlantStatusContext : DbContext
 {

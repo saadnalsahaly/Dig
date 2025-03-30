@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Dig;
-using Dig.Models;
+using Dig.Data;
+using Environment = Dig.Models.Environment;
 
 namespace Dig.Controllers
 {

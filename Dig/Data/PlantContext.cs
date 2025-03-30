@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Dig.Models;
 using Microsoft.EntityFrameworkCore;
-using Dig;
 
-namespace Dig.Models
+namespace Dig.Data
 {
     public class PlantContext : DbContext
     {

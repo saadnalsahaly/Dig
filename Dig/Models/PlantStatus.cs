@@ -1,4 +1,4 @@
-namespace Dig;
+namespace Dig.Models;
 
 public class PlantStatus(long id, string plantId, string disease, double confidence, DateTime dateTime)
 {

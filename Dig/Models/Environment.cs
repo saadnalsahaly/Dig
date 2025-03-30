@@ -1,4 +1,4 @@
-namespace Dig;
+namespace Dig.Models;
 
 public class Environment(long id, double temperature, double humidity, double lightIntensity, DateTime dateTime)
 {

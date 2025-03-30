@@ -1,7 +1,9 @@
+using Dig.Data;
 using Dig.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Environment = Dig.Models.Environment;
 
 namespace Dig.Backend;
 

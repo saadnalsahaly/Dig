@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Environment = Dig.Models.Environment;
 
-namespace Dig.Models;
+namespace Dig.Data;
 
 public class EnvironmentContext : DbContext
 {

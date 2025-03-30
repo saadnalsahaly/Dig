@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Dig;
+using Dig.Data;
 using Dig.Models;
 
 namespace Dig.Controllers

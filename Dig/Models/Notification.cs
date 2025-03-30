@@ -1,4 +1,4 @@
-namespace Dig;
+namespace Dig.Models;
 
 public class Notification
 {

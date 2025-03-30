@@ -1,3 +1,4 @@
+using Dig.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dig.Controllers
