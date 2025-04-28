@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Environment = Dig.Models.Environment;
 
-namespace Dig.Backend;
+namespace Dig;
 
 public class Program
 {
@@ -27,6 +27,7 @@ public class Program
         builder.Services.AddDbContext<NotificationContext>(opt =>
             opt.UseSqlite("Data Source=notificationlog.db"));
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        builder.WebHost.UseUrls("http://0.0.0.0:5284");
         builder.Services.AddOpenApi();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
