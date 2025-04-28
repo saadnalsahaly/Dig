@@ -54,6 +54,20 @@ namespace Dig.Controllers
             return plantStatus;
         }
         
+        [HttpGet("Plant/{plantId}")]
+        public async Task<ActionResult<IEnumerable<PlantStatus>>> GetByPlantId(string plantId)
+        {
+            var list = await _context.PlantStatuses
+                .Where(ps => ps.PlantId == plantId)
+                .OrderBy(ps => ps.DateTime)
+                .ToListAsync();
+
+            if (!list.Any())
+                return NotFound($"No PlantStatus entries for plantId = '{plantId}'.");
+
+            return Ok(list);
+        }
+        
         // GET: api/PlantStatus/stream
         [HttpGet("stream")]
         public async Task StreamUpdates()
