@@ -31,7 +31,7 @@ namespace Dig.Controllers
             if (latest.HasValue)
             {
                 return await _userCommandContext.UserCommands
-                    .OrderByDescending(c => c.Id)
+                    .OrderByDescending(c => c.DateTime)
                     .Take(latest.Value)
                     .ToListAsync();
             }
@@ -60,7 +60,7 @@ namespace Dig.Controllers
         {
             // Retrieve the latest operation mode
             var latestMode = await _operationModeContext.OperationModes
-                .OrderByDescending(m => m.Id) // Assuming the latest mode has the highest ID
+                .OrderByDescending(m => m.DateTime) // Assuming the latest mode has the highest ID
                 .FirstOrDefaultAsync();
     
             if (latestMode == null)

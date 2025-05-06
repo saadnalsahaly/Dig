@@ -32,7 +32,7 @@ namespace Dig.Controllers
             if (latest.HasValue)
             {
                 return await _context.PlantStatuses
-                    .OrderByDescending(e => e.Id)
+                    .OrderByDescending(e => e.DateTime)
                     .Take(latest.Value)
                     .ToListAsync();
             }
